@@ -758,7 +758,7 @@ void XLibMacros::Export(TLibrary& lib)  {
     );
   xlib_InitMacro(RSA,
     "c-copy to clipboard&;"
-    "d-print debug info",
+    "d-print debug info [digraph], full",
     fpAny|psFileLoaded,
     "Identifies chiral centres and prints R/S their stereo configuration");
   xlib_InitMacro(CONF,
@@ -12082,7 +12082,10 @@ void XLibMacros::macRSA(TStrObjList &Cmds, const TParamList &Options,
 {
   TXApp &app = TXApp::GetInstance();
   const TAsymmUnit &au = app.XFile().GetAsymmUnit();
-  bool debug = Options.GetBoolOption('d');
+  olxstr_ptr debug_str = Options.GetStrPtr('d');
+  bool debug = debug_str.ok(),
+    debug_full = debug ? debug_str->Equalsi("full") : false;
+  
   TStrList result;
   for (size_t i=0; i < au.AtomCount(); i++) {
     TCAtom &a = au.GetAtom(i);
@@ -12098,11 +12101,11 @@ void XLibMacros::macRSA(TStrObjList &Cmds, const TParamList &Options,
           TBasicApp::NewLogEntry(logWarning) << "RSA algorithms do not agree: "
             << "Full: " << w.a << " vs DG: " << w1.a;
           if (debug) {
-            TBasicApp::NewLogEntry() << w1.b;
+            TBasicApp::NewLogEntry() << (debug_full ? w.b : w1.b);
           }
         }
         else if (debug) {
-          TBasicApp::NewLogEntry() << w1.b;
+          TBasicApp::NewLogEntry() << (debug_full ? w.b : w1.b);
         }
       }
     }
