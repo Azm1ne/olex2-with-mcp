@@ -12096,10 +12096,11 @@ void XLibMacros::macRSA(TStrObjList &Cmds, const TParamList &Options,
     try {
       w = olx_analysis::chirality::rsa_analyse_full(a, debug);
       if (!w.a.IsEmpty()) {
-        olx_pair_t<olxstr, olxstr> w1 = olx_analysis::chirality::rsa_analyse_digraph(a, debug);
+        // do dry_run
+        olx_pair_t<olxstr, olxstr> w1 = olx_analysis::chirality::rsa_analyse_digraph(a, debug, true);
         if (w.a != w1.a) {
-          TBasicApp::NewLogEntry(logWarning) << "RSA algorithms do not agree: "
-            << "Full: " << w.a << " vs DG: " << w1.a;
+          TBasicApp::NewLogEntry(logWarning) << a.GetResiLabel() <<
+            ": RSA algorithms do not agree: Full: " << w.a << " vs DG: " << w1.a;
           if (debug) {
             TBasicApp::NewLogEntry() << (debug_full ? w.b : w1.b);
           }
